@@ -6,7 +6,7 @@ part of 'streak_detail_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$streakDetailsHash() => r'a5f2249162060fa1385dd8bc7535d09342c9d6fd';
+String _$streakDetailsHash() => r'6e7c6873c7cd35594b45176c1443369ad94871ac';
 
 /// See also [streakDetails].
 @ProviderFor(streakDetails)
@@ -22,7 +22,7 @@ final streakDetailsProvider =
 );
 
 typedef StreakDetailsRef = AutoDisposeFutureProviderRef<Map<String, int>>;
-String _$freezeGemCountHash() => r'e2c5d0bf590c4aa7dca74577b439f7e4b101312b';
+String _$freezeGemCountHash() => r'd974d68c6dd290c27e6e8cdb5ee848edab764119';
 
 /// See also [freezeGemCount].
 @ProviderFor(freezeGemCount)

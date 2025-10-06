@@ -13,7 +13,7 @@ import 'package:timezone/timezone.dart' as tz;
 // Fungsi ini harus berada di luar kelas untuk background callback
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
-  print('DEBUG: Notifikasi diklik di background: ${notificationResponse.payload}');
+  // print('DEBUG: Notifikasi diklik di background: ${notificationResponse.payload}');
 }
 
 class NotificationService {
@@ -74,7 +74,7 @@ class NotificationService {
           channelDescription: 'Mengingatkan untuk membaca setiap hari.', // Deskripsi Channel
           importance: Importance.max,
           priority: Priority.high,
-          color: const Color(0xFF6D4C41),
+          color: Color(0xFF6D4C41),
           playSound: true,
           // icon: 'reading',
           // icon: 'stack_of_books',

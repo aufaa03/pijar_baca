@@ -36,194 +36,399 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
   Widget build(BuildContext context) {
     final book = widget.book;
     final progress = (book.currentPage ?? 0) / (book.totalPages ?? 1);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text(book.title ?? 'Detail Buku')),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 150,
-                child: AspectRatio(
-                  aspectRatio: 2 / 3,
-                  child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    child: book.coverUrl != null && book.coverUrl!.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: book.coverUrl!,
-                            fit: BoxFit.cover,
-                          )
-                        : Container(
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.book_outlined),
-                          ),
+      appBar: AppBar(
+        title: Text(
+          book.title ?? 'Detail Buku',
+          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: colorScheme.onBackground,
+      ),
+      body: CustomScrollView(
+        slivers: [
+          // Header dengan cover dan info buku
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Cover buku
+                  Container(
+                    height: 160,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: book.coverUrl != null && book.coverUrl!.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: book.coverUrl!,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) => 
+                                _buildPlaceholderCover(colorScheme),
+                            )
+                          : _buildPlaceholderCover(colorScheme),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      book.title ?? 'Tanpa Judul',
-                      style: Theme.of(context).textTheme.headlineSmall,
+                  const SizedBox(width: 20),
+                  // Info buku
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          book.title ?? 'Tanpa Judul',
+                          style: textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'oleh ${book.author ?? 'Tanpa Penulis'}',
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurface.withOpacity(0.7),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '${book.totalPages ?? 0} Halaman',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'oleh ${book.author ?? 'Tanpa Penulis'}',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Chip(label: Text('${book.totalPages ?? 0} Halaman')),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-          const SizedBox(height: 24),
-          if (book.description != null && book.description!.isNotEmpty) ...[
-            Card(
+
+          // Deskripsi buku
+          if (book.description != null && book.description!.isNotEmpty)
+            SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Deskripsi',
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
                     Text(
                       book.description!,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withOpacity(0.8),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface.withOpacity(0.8),
+                        height: 1.5,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-          ],
-          // Tombol Mulai Membaca
+
+          // Tombol Mulai Membaca (untuk wishlist)
           if (book.status == BookStatus.wishlist)
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                icon: const Icon(Icons.play_circle_fill),
-                label: const Text('Mulai Membaca'),
-                onPressed: () async {
-                  // Ubah status buku
-                  await isarService.startReadingBook(book);
-                  // Refresh rak buku
-                  ref.invalidate(booksByStatusProvider);
-
-                  // 🔔 Set reminder harian
-                  await notificationService.scheduleDailyReminder();
-
-                  // Kembali ke halaman utama
-                  if (mounted) Navigator.pop(context);
-                },
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        colorScheme.primary,
+                        colorScheme.primaryContainer,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: FilledButton.icon(
+                    icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                    label: const Text(
+                      'Mulai Membaca',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    onPressed: () async {
+                      await isarService.startReadingBook(book);
+                      ref.invalidate(booksByStatusProvider);
+                      await notificationService.scheduleDailyReminder();
+                      if (mounted) Navigator.pop(context);
+                    },
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: colorScheme.onPrimary,
+                      shadowColor: Colors.transparent,
+                    ),
+                  ),
                 ),
               ),
             ),
 
-          // Kalau statusnya lagi dibaca → tampilkan progres & AI
+          // Progress dan AI Section (untuk buku yang sedang dibaca)
           if (book.status == BookStatus.reading) ...[
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Progres Bacaan',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 16),
-                    LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 8,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Halaman ${book.currentPage ?? 0} dari ${book.totalPages ?? 0} (${(progress * 100).toStringAsFixed(0)}%)',
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.icon(
-                        onPressed: () =>
-                            _showUpdateProgressDialog(context, ref, book),
-                        icon: const Icon(Icons.edit_note),
-                        label: const Text('Update Progres'),
-                      ),
-                    ),
-                  ],
+            // Progress Section
+            SliverToBoxAdapter(
+              child: _buildProgressSection(context, book, progress),
+            ),
+
+            // AI Assistant Section
+            SliverToBoxAdapter(
+              child: _buildAISection(context),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderCover(ColorScheme colorScheme) {
+    return Container(
+      color: colorScheme.surfaceVariant,
+      child: Icon(
+        Icons.book_rounded,
+        color: colorScheme.onSurfaceVariant,
+        size: 40,
+      ),
+    );
+  }
+
+  Widget _buildProgressSection(BuildContext context, Book book, double progress) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: colorScheme.outline.withOpacity(0.1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.timeline_rounded, color: colorScheme.primary, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Progres Bacaan',
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          LinearProgressIndicator(
+            value: progress,
+            minHeight: 6,
+            borderRadius: BorderRadius.circular(3),
+            color: colorScheme.primary,
+            backgroundColor: colorScheme.surfaceVariant,
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${(progress * 100).toStringAsFixed(0)}% selesai',
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+              Text(
+                '${book.currentPage ?? 0}/${book.totalPages ?? 0} halaman',
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => _showUpdateProgressDialog(context, ref, book),
+              icon: const Icon(Icons.edit_rounded, size: 18),
+              label: const Text('Update Progres'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAISection(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: colorScheme.outline.withOpacity(0.1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.auto_awesome_rounded, color: colorScheme.primary, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Tanya AI',
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Diskusikan buku ini dengan AI',
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.6),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _questionController,
+            decoration: InputDecoration(
+              hintText: 'Contoh: Apa tema utama buku ini?',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+            ),
+            minLines: 2,
+            maxLines: 3,
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: _isLoadingAI ? null : _askAI,
+              icon: _isLoadingAI
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: colorScheme.onPrimary,
+                      ),
+                    )
+                  : const Icon(Icons.auto_awesome_rounded, size: 18),
+              label: Text(_isLoadingAI ? 'Memproses...' : 'Tanya AI'),
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+          if (_aiAnswer != null) ...[
             const SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Kupas Tuntas Isi Buku',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const Text(
-                      'Tanya apa saja tentang buku ini!',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _questionController,
-                      decoration: const InputDecoration(
-                        hintText: 'Contoh: Apa tema utama buku ini?',
-                        border: OutlineInputBorder(),
-                      ),
-                      minLines: 2,
-                      maxLines: 4,
-                    ),
-                    const SizedBox(height: 8),
-                    ElevatedButton.icon(
-                      onPressed: _isLoadingAI ? null : _askAI,
-                      icon: const Icon(Icons.psychology),
-                      label: const Text('Tanya AI'),
-                    ),
-                    if (_isLoadingAI)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 16.0),
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                    if (_aiAnswer != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Jawaban AI:',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            SelectableText(_aiAnswer!),
-                          ],
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: colorScheme.primary.withOpacity(0.1),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.auto_awesome_rounded, 
+                          color: colorScheme.primary, size: 16),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Jawaban AI',
+                        style: textTheme.bodySmall?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                  ],
-                ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  SelectableText(
+                    _aiAnswer!,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.9),
+                      height: 1.5,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -264,58 +469,87 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Update Progres'),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: controller,
-              autofocus: true,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: InputDecoration(
-                labelText: 'Baca sampai halaman...',
-                hintText: 'Halaman saat ini: ${book.currentPage ?? 0}',
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty)
-                  return 'Harap masukkan nomor halaman';
-                final page = int.parse(value);
-                if (page <= (book.currentPage ?? 0))
-                  return 'Halaman harus lebih besar';
-                if (page > (book.totalPages ?? 0))
-                  return 'Melebihi total halaman';
-                return null;
-              },
+        return Dialog(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Update Progres',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Form(
+                  key: formKey,
+                  child: TextFormField(
+                    controller: controller,
+                    autofocus: true,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(
+                      labelText: 'Halaman saat ini',
+                      hintText: 'Halaman: ${book.currentPage ?? 0}',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty)
+                        return 'Harap masukkan nomor halaman';
+                      final page = int.parse(value);
+                      if (page <= (book.currentPage ?? 0))
+                        return 'Halaman harus lebih besar';
+                      if (page > (book.totalPages ?? 0))
+                        return 'Melebihi total halaman';
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Batal'),
+                    ),
+                    const SizedBox(width: 8),
+                    FilledButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate()) {
+                          final newPage = int.parse(controller.text);
+                          final bool justFinished = await isarService
+                              .updateBookProgress(book, newPage);
+                          ref.invalidate(streakCountProvider);
+                          ref.invalidate(booksByStatusProvider);
+                          ref.invalidate(streakDetailsProvider);
+                          ref.invalidate(streakCacheProvider);
+                          setState(() {});
+
+                          if (mounted) Navigator.pop(context);
+
+                          if (justFinished && mounted) {
+                            _showRecommendationDialog(context, book);
+                          }
+                        }
+                      },
+                      child: const Text('Simpan'),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Batal'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (formKey.currentState!.validate()) {
-                  final newPage = int.parse(controller.text);
-                  final bool justFinished = await isarService
-                      .updateBookProgress(book, newPage);
-                  ref.invalidate(streakCountProvider);
-                  ref.invalidate(booksByStatusProvider);
-                  ref.invalidate(streakDetailsProvider);
-                  ref.invalidate(streakCacheProvider);
-                  setState(() {});
-
-                  if (mounted) Navigator.pop(context);
-
-                  if (justFinished && mounted) {
-                    _showRecommendationDialog(context, book);
-                  }
-                }
-              },
-              child: const Text('Simpan'),
-            ),
-          ],
         );
       },
     );
@@ -328,90 +562,124 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             bool isQuizLoading = false;
-            return AlertDialog(
-              title: const Text('Buku Selesai!'),
-              content: FutureBuilder<String>(
-                future: _aiService.getBookRecommendations(finishedBook),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('AI sedang menyiapkan rekomendasi untukmu...'),
-                        SizedBox(height: 20),
-                        CircularProgressIndicator(),
-                      ],
-                    );
-                  }
-                  return SingleChildScrollView(
-                    child: Text(snapshot.data ?? 'Tidak ada rekomendasi.'),
-                  );
-                },
+            return Dialog(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              actions: [
-                if (isQuizLoading)
-                  // ignore: dead_code
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(),
-                  )
-                else
-                  TextButton.icon(
-                    icon: const Icon(Icons.quiz),
-                    label: const Text('Uji Ingatanmu'),
-                    onPressed: () async {
-                      setState(() => isQuizLoading = true);
-                      String jsonString = await _aiService.generateBookQuiz(
-                        finishedBook,
-                      );
-
-                      final startIndex = jsonString.indexOf('[');
-                      final endIndex = jsonString.lastIndexOf(']');
-
-                      if (startIndex != -1 && endIndex != -1) {
-                        jsonString = jsonString.substring(
-                          startIndex,
-                          endIndex + 1,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.celebration_rounded,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Buku Selesai!',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    FutureBuilder<String>(
+                      future: _aiService.getBookRecommendations(finishedBook),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('AI sedang menyiapkan rekomendasi...'),
+                              SizedBox(height: 16),
+                              CircularProgressIndicator(),
+                            ],
+                          );
+                        }
+                        return Text(
+                          snapshot.data ?? 'Tidak ada rekomendasi.',
+                          style: Theme.of(context).textTheme.bodyMedium,
                         );
-                      }
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (isQuizLoading)
+                          // ignore: dead_code
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(),
+                          )
+                        else
+                          FilledButton.icon(
+                            icon: const Icon(Icons.quiz_rounded, size: 18),
+                            label: const Text('Uji Ingatanmu'),
+                            onPressed: () async {
+                              setState(() => isQuizLoading = true);
+                              String jsonString = await _aiService.generateBookQuiz(
+                                finishedBook,
+                              );
 
-                      try {
-                        final List<dynamic> jsonList = jsonDecode(jsonString);
-                        final questions = jsonList
-                            .map((json) => QuizQuestion.fromJson(json))
-                            .toList();
-                        if (questions.isNotEmpty && mounted) {
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  QuizScreen(questions: questions),
-                            ),
-                          );
-                        } else {
-                          throw Exception('Kuis kosong setelah parsing.');
-                        }
-                      } catch (e) {
-                        print('Gagal mem-parsing JSON kuis: $e');
-                        if (mounted) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'AI gagal membuat kuis. Coba lagi untuk buku lain.',
-                              ),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                  ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Tutup'),
+                              final startIndex = jsonString.indexOf('[');
+                              final endIndex = jsonString.lastIndexOf(']');
+
+                              if (startIndex != -1 && endIndex != -1) {
+                                jsonString = jsonString.substring(
+                                  startIndex,
+                                  endIndex + 1,
+                                );
+                              }
+
+                              try {
+                                final List<dynamic> jsonList = jsonDecode(jsonString);
+                                final questions = jsonList
+                                    .map((json) => QuizQuestion.fromJson(json))
+                                    .toList();
+                                if (questions.isNotEmpty && mounted) {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          QuizScreen(questions: questions),
+                                    ),
+                                  );
+                                } else {
+                                  throw Exception('Kuis kosong setelah parsing.');
+                                }
+                              } catch (e) {
+                                print('Gagal mem-parsing JSON kuis: $e');
+                                if (mounted) {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'AI gagal membuat kuis. Coba lagi untuk buku lain.',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        const SizedBox(width: 8),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Tutup'),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
             );
           },
         );
@@ -422,17 +690,43 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
   void _showRateLimitDialog(BuildContext context, String message) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Batas Penggunaan Tercapai'),
-        content: Text(
-          '$message\n\nFitur AI akan tersedia kembali besok setelah pukul 14:00 WIB.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Mengerti'),
+      builder: (context) => Dialog(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                color: Theme.of(context).colorScheme.error,
+                size: 48,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Batas Penggunaan Tercapai',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                '$message\n\nFitur AI akan tersedia kembali besok setelah pukul 14:00 WIB.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Mengerti'),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
