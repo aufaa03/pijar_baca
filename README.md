@@ -1,28 +1,44 @@
 # Pijar Baca 🔥
 
-**Pijar Baca** adalah aplikasi _personal reading tracker_ yang dibangun menggunakan Flutter. Aplikasi ini tidak hanya mencatat progres membaca, tetapi juga memotivasi pengguna melalui statistik menarik dan sistem *streak* (rentetan membaca) yang divisualisasikan sebagai api yang terus menyala.
+[![Flutter](https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter)](https://flutter.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+Aplikasi *personal reading tracker* yang dibangun menggunakan Flutter untuk membantu Anda membangun dan melacak kebiasaan membaca secara konsisten dan menyenangkan.
 
+![Demo Pijar Baca](link-ke-gif-demo-anda.gif)
 
 ---
 
-## ✨ Fitur Utama
+## ✨ Fitur-Fitur Unggulan
 
-- **Rak Buku Digital**: Kelola koleksi buku Anda dalam tiga rak utama: "Sedang Dibaca", "Selesai Dibaca", dan "Ingin Dibaca" (Wishlist).
-- **Penambahan Buku Fleksibel**:
-  - **Manual**: Masukkan data buku secara manual.
-  - **Scan ISBN**: Pindai barcode ISBN buku fisik untuk mengisi data secara otomatis via Google Books API.
-  - **Ketik ISBN**: Cari dan tambahkan buku dengan mengetik nomor ISBN.
-- **Pelacakan Progres**: Catat halaman terakhir yang dibaca dan lihat progres bar secara visual.
-- **Sistem Streak Api 🔥**: Jaga konsistensi membaca harian untuk membuat api terus menyala.
-- **Streak Freeze 💎**: Dapatkan "Permata Beku" sebagai hadiah dan gunakan secara otomatis untuk melindungi *streak* saat Anda melewatkan satu hari.
-- **Asisten Membaca Cerdas (AI)**: Didukung oleh Google Gemini, aplikasi ini dapat:
-  - Memberikan **rekomendasi buku** yang dipersonalisasi.
-  - **Menjawab pertanyaan** apa pun tentang isi buku yang sedang dibaca.
-  - Membuat **kuis interaktif** setelah Anda menyelesaikan sebuah buku.
-- **Dasbor Statistik**: Visualisasikan kebiasaan membaca Anda melalui kalender aktivitas dan rekor pencapaian.
-- **Notifikasi Kustom**: Atur waktu pengingat harian agar tidak lupa membaca dan menjaga api *streak*.
-- **UI Modern & Tematik**: Tampilan modern dengan tema buku yang kalem dan nyaman di mata.
+Pijar Baca dirancang dengan fitur-fitur modern untuk memberikan pengalaman terbaik bagi para pecinta buku.
+
+#### **Manajemen Cerdas**
+- **Rak Buku Digital**: Kelola koleksi dalam tiga rak: "Sedang Dibaca", "Selesai Dibaca", dan "Ingin Dibaca".
+- **Penambahan Buku Fleksibel**: Tambah buku secara **manual**, **ketik ISBN**, atau **pindai barcode ISBN** fisik menggunakan kamera untuk mendapatkan data otomatis dari Google Books API.
+- **Pelacakan Progres**: Catat halaman terakhir yang dibaca dan lihat progres bar visual di setiap buku.
+
+#### **Gamifikasi & Motivasi**
+- **Sistem Streak Api 🔥**: Jaga konsistensi membaca harian untuk membuat api *streak* terus menyala dengan **animasi dinamis** yang berubah sesuai pencapaian.
+- **Streak Freeze 💎**: Dapatkan "Permata Beku" sebagai hadiah setiap 7 hari untuk melindungi *streak* Anda secara otomatis saat Anda melewatkan satu hari.
+- **Halaman Detail Streak**: Lacak rekor *streak* terpanjang dan lihat kalender konsistensi Anda.
+- **Notifikasi Kustom**: Atur waktu pengingat harian agar tidak lupa membaca.
+
+#### **Asisten Membaca Cerdas (AI)**
+Didukung oleh Google Gemini, Pijar Baca menjadi partner membaca Anda:
+- **Rekomendasi Buku**: Dapatkan rekomendasi buku yang dipersonalisasi setelah Anda menyelesaikan sebuah buku.
+- **Tanya Jawab Interaktif**: Ajukan pertanyaan apa pun tentang isi buku yang sedang dibaca dan dapatkan jawaban dari AI.
+- **Kuis Interaktif**: Uji pemahaman Anda dengan kuis yang dibuat secara otomatis setelah Anda menamatkan buku.
+
+---
+
+## 🖼️ Galeri Aplikasi
+
+| Rak Buku (Galeri) | Halaman Detail | Statistik & Kalender |
+| :---: |:---:|:---:|
+| <img src="" width="250"> | <img src="" width="250"> | <img src="" width="250"> |
+| **Kuis Interaktif** | **Pengaturan** | **Onboarding** |
+| <img src="" width="250"> | <img src="" width="250"> | <img src="" width="250"> |
 
 ---
 
@@ -31,9 +47,9 @@
 - **Framework**: Flutter
 - **Database Lokal**: Isar
 - **State Management**: Riverpod
-- **Integrasi API**: Dio (untuk Google Books API), google_generative_ai (untuk Google Gemini)
-- **UI & Visualisasi**: `cached_network_image`, `google_fonts`, `table_calendar`
-- **Fitur Native**: `mobile_scanner`, `flutter_local_notifications`
+- **Integrasi API**: Dio, `google_generative_ai` (Google Gemini), Google Books API
+- **UI & Visualisasi**: `cached_network_image`, `google_fonts`, `table_calendar`, `introduction_screen`, `lottie`
+- **Fitur Native**: `mobile_scanner`, `flutter_local_notifications`, `permission_handler`
 
 ---
 
@@ -47,16 +63,19 @@ Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah ber
 
 2.  **Clone Repositori**:
     ```bash
-    git clone [https://github.com/NAMA_ANDA/pijar_baca.git](https://github.com/NAMA_ANDA/pijar_baca.git)
+    git clone [https://github.com/NAMA_GITHUB_ANDA/pijar_baca.git](https://github.com/aufaa03/pijar_baca.git)
     cd pijar_baca
     ```
-
-3.  **Siapkan API Key**:
-    - Buka [Google AI Studio](https://aistudio.google.com/) untuk mendapatkan API Key Gemini Anda.
+3.  **Siapkan API Keys (Penting!)**:
+    Proyek ini memerlukan **dua** API Key agar berfungsi penuh.
     - Buat file baru di folder utama proyek dengan nama `.env`.
     - Isi file `.env` dengan format berikut:
       ```
-      GEMINI_API_KEY=MASUKKAN_API_KEY_ANDA_DI_SINI
+      # 1. Dapatkan dari Google AI Studio untuk fitur AI
+      GEMINI_API_KEY=MASUKKAN_API_KEY_GEMINI_ANDA
+
+      # 2. Dapatkan dari Google Cloud Console untuk fitur Scan ISBN
+      GOOGLE_BOOKS_API_KEY=MASUKKAN_API_KEY_GOOGLE_BOOKS_ANDA
       ```
 
 4.  **Instal Dependensi**:
@@ -65,7 +84,6 @@ Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah ber
     ```
 
 5.  **Jalankan Code Generator**:
-    Karena proyek ini menggunakan `riverpod_generator` dan `isar_generator`, jalankan perintah ini satu kali:
     ```bash
     dart run build_runner build --delete-conflicting-outputs
     ```
@@ -76,3 +94,15 @@ Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah ber
     ```
 
 ---
+
+## 🧑‍💻 Kontributor
+
+Dibuat dan dikembangkan oleh:
+
+- **[Muhammad Aufa Rozaky](https://github.com/aufaa03)**
+
+---
+
+## 📄 Lisensi
+
+Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE](LICENSE) untuk detailnya.
