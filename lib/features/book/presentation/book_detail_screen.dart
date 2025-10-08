@@ -12,6 +12,14 @@ import 'package:pijar_baca/main.dart';
 import 'package:pijar_baca/features/home/presentation/streak_provider.dart';
 import 'package:pijar_baca/features/streak/presentation/streak_detail_provider.dart';
 
+class TimeoutException implements Exception {
+  final String message;
+  TimeoutException(this.message);
+
+  @override
+  String toString() => message;
+}
+
 class BookDetailScreen extends ConsumerStatefulWidget {
   final Book book;
   const BookDetailScreen({super.key, required this.book});
@@ -78,8 +86,8 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                           ? CachedNetworkImage(
                               imageUrl: book.coverUrl!,
                               fit: BoxFit.cover,
-                              errorWidget: (context, url, error) => 
-                                _buildPlaceholderCover(colorScheme),
+                              errorWidget: (context, url, error) =>
+                                  _buildPlaceholderCover(colorScheme),
                             )
                           : _buildPlaceholderCover(colorScheme),
                     ),
@@ -135,7 +143,10 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
           if (book.description != null && book.description!.isNotEmpty)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -162,7 +173,10 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
           if (book.status == BookStatus.wishlist)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -205,9 +219,7 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
             ),
 
             // AI Assistant Section
-            SliverToBoxAdapter(
-              child: _buildAISection(context),
-            ),
+            SliverToBoxAdapter(child: _buildAISection(context)),
           ],
         ],
       ),
@@ -225,7 +237,11 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
     );
   }
 
-  Widget _buildProgressSection(BuildContext context, Book book, double progress) {
+  Widget _buildProgressSection(
+    BuildContext context,
+    Book book,
+    double progress,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -235,9 +251,7 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: colorScheme.outline.withOpacity(0.1),
-        ),
+        border: Border.all(color: colorScheme.outline.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -251,7 +265,11 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.timeline_rounded, color: colorScheme.primary, size: 20),
+              Icon(
+                Icons.timeline_rounded,
+                color: colorScheme.primary,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Progres Bacaan',
@@ -317,9 +335,7 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: colorScheme.outline.withOpacity(0.1),
-        ),
+        border: Border.all(color: colorScheme.outline.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -333,7 +349,11 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome_rounded, color: colorScheme.primary, size: 20),
+              Icon(
+                Icons.auto_awesome_rounded,
+                color: colorScheme.primary,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Tanya AI',
@@ -357,7 +377,9 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
               hintText: 'Contoh: Apa tema utama buku ini?',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(
+                  color: colorScheme.outline.withOpacity(0.3),
+                ),
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -368,6 +390,7 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
             maxLines: 3,
           ),
           const SizedBox(height: 12),
+          // Di _buildAISection, update bagian button:
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
@@ -382,7 +405,19 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                       ),
                     )
                   : const Icon(Icons.auto_awesome_rounded, size: 18),
-              label: Text(_isLoadingAI ? 'Memproses...' : 'Tanya AI'),
+              label: _isLoadingAI
+                  ? const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Memproses'),
+                        SizedBox(width: 4),
+                        Text(
+                          '...',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    )
+                  : const Text('Tanya AI'),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
@@ -399,17 +434,18 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
               decoration: BoxDecoration(
                 color: colorScheme.primary.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: colorScheme.primary.withOpacity(0.1),
-                ),
+                border: Border.all(color: colorScheme.primary.withOpacity(0.1)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.auto_awesome_rounded, 
-                          color: colorScheme.primary, size: 16),
+                      Icon(
+                        Icons.auto_awesome_rounded,
+                        color: colorScheme.primary,
+                        size: 16,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         'Jawaban AI',
@@ -438,23 +474,176 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
   }
 
   // --- LOGIC METHODS ---
+  // --- LOGIC METHODS ---
   void _askAI() async {
     if (_questionController.text.isEmpty) return;
-    setState(() => _isLoadingAI = true);
-    try {
-      final answer = await _aiService.getInteractiveAnswer(
-        widget.book,
-        _questionController.text,
+
+    setState(() {
+      _isLoadingAI = true;
+      _aiAnswer = null;
+    });
+
+    // Tampilkan snackbar info untuk response yang lama
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const CircularProgressIndicator.adaptive(
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+                strokeWidth: 2,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'AI sedang memproses pertanyaan...\nIni mungkin memakan waktu 10-30 detik',
+                  style: const TextStyle(fontSize: 14),
+                  maxLines: 2,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.blue.shade700,
+          duration: const Duration(seconds: 10),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
-      setState(() {
-        _aiAnswer = answer;
-      });
+    }
+
+    try {
+      // Timeout setelah 45 detik
+      final answer = await _aiService
+          .getInteractiveAnswer(widget.book, _questionController.text)
+          .timeout(
+            const Duration(seconds: 45),
+            onTimeout: () {
+              throw TimeoutException(
+                'AI mengambil waktu terlalu lama untuk merespon',
+              );
+            },
+          );
+
+      if (mounted) {
+        setState(() {
+          _aiAnswer = answer;
+        });
+      }
+    } on TimeoutException catch (_) {
+      if (mounted) {
+        _showTimeoutDialog(context);
+      }
+      setState(() => _aiAnswer = null);
     } on RateLimitException catch (e) {
       if (mounted) _showRateLimitDialog(context, e.message);
       setState(() => _aiAnswer = null);
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog(context, e.toString());
+      }
+      setState(() => _aiAnswer = null);
     } finally {
-      setState(() => _isLoadingAI = false);
+      if (mounted) {
+        setState(() => _isLoadingAI = false);
+      }
     }
+  }
+
+  void _showTimeoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.timer_off_rounded,
+                color: Theme.of(context).colorScheme.primary,
+                size: 48,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Respon Terlalu Lama',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'AI membutuhkan waktu lebih lama dari biasanya untuk merespon.\n\n'
+                'Ini bisa terjadi karena:\n'
+                '• Koneksi internet yang lambat\n'
+                '• Server AI sedang sibuk\n'
+                '• Pertanyaan yang kompleks\n\n'
+                'Silakan coba lagi dalam beberapa saat.',
+                textAlign: TextAlign.start,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Mengerti'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String error) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                color: Theme.of(context).colorScheme.error,
+                size: 48,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Terjadi Kesalahan',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Maaf, terjadi kesalahan saat memproses pertanyaan Anda.\n\n'
+                'Silakan coba lagi nanti atau periksa koneksi internet Anda.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Tutup'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   // --- DIALOGS ---
@@ -471,7 +660,9 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
       builder: (context) {
         return Dialog(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -582,9 +773,8 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'Buku Selesai!',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
@@ -592,7 +782,8 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                     FutureBuilder<String>(
                       future: _aiService.getBookRecommendations(finishedBook),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return const Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -624,9 +815,8 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                             label: const Text('Uji Ingatanmu'),
                             onPressed: () async {
                               setState(() => isQuizLoading = true);
-                              String jsonString = await _aiService.generateBookQuiz(
-                                finishedBook,
-                              );
+                              String jsonString = await _aiService
+                                  .generateBookQuiz(finishedBook);
 
                               final startIndex = jsonString.indexOf('[');
                               final endIndex = jsonString.lastIndexOf(']');
@@ -639,7 +829,9 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                               }
 
                               try {
-                                final List<dynamic> jsonList = jsonDecode(jsonString);
+                                final List<dynamic> jsonList = jsonDecode(
+                                  jsonString,
+                                );
                                 final questions = jsonList
                                     .map((json) => QuizQuestion.fromJson(json))
                                     .toList();
@@ -653,7 +845,9 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                                     ),
                                   );
                                 } else {
-                                  throw Exception('Kuis kosong setelah parsing.');
+                                  throw Exception(
+                                    'Kuis kosong setelah parsing.',
+                                  );
                                 }
                               } catch (e) {
                                 print('Gagal mem-parsing JSON kuis: $e');
@@ -706,9 +900,9 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
               const SizedBox(height: 16),
               Text(
                 'Batas Penggunaan Tercapai',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
               Text(

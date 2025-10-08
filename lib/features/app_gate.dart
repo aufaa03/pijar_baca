@@ -1,8 +1,10 @@
 // Versi dengan animasi lebih smooth
+// import 'package:flutter/foundation.dart';  untuk debug mode
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pijar_baca/core/providers/initialization_provider.dart';
 import 'package:pijar_baca/features/home/presentation/bookshelf_screen.dart';
+import 'package:pijar_baca/features/onboarding/presentation/onboarding_screen.dart';
 
 class AppGate extends ConsumerWidget {
   const AppGate({super.key});
@@ -14,9 +16,39 @@ class AppGate extends ConsumerWidget {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: init.when(
-        loading: () => const SplashScreen(),
-        error: (err, stack) => ErrorScreen(error: err.toString()),
-        data: (_) => const BookshelfScreen(),
+         // Saat sedang loading, tampilkan SplashScreen
+        // Key penting agar AnimatedSwitcher tahu widgetnya berbeda
+        loading: () => const SplashScreen(key: ValueKey('splash')),
+
+        // Jika ada error, tampilkan ErrorScreen
+        error: (err, stack) => ErrorScreen(
+          key: const ValueKey('error'),
+          error: err.toString(),
+        ),
+
+        // Jika selesai, periksa hasil boolean-nya
+        data: (hasSeenOnboarding) {
+          // Jika sudah pernah lihat onboarding, ke rak buku
+          if (hasSeenOnboarding) {
+            return const BookshelfScreen(key: ValueKey('bookshelf'));
+          }
+          // Jika belum, ke halaman onboarding
+          else {
+            return const OnboardingScreen(key: ValueKey('onboarding'));
+          }
+            // Ia akan `true` saat kita debug, dan `false` saat aplikasi dirilis. 
+            // untuk memaksa menampilkan onboarding screen = debug apk
+          // if (kDebugMode) {
+          //   // 2. Jika sedang debug, selalu tampilkan OnboardingScreen
+          //   print('DEBUG MODE: Menampilkan OnboardingScreen secara paksa.');
+          //   return const OnboardingScreen(key: ValueKey('onboarding_debug'));
+          // } else {
+          //   // 3. Jika tidak, gunakan logika normal
+          //   return hasSeenOnboarding
+          //       ? const BookshelfScreen(key: ValueKey('bookshelf'))
+          //       : const OnboardingScreen(key: ValueKey('onboarding'));
+          // }
+        },
       ),
     );
   }

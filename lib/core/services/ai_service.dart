@@ -11,7 +11,7 @@ class RateLimitException implements Exception {
 
 class AIService {
   final model = GenerativeModel(
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-pro',
     apiKey: dotenv.env['GEMINI_API_KEY']!,
   );
 
@@ -27,6 +27,7 @@ class AIService {
       final response = await model.generateContent(content);
       return response.text ?? 'Maaf, tidak bisa memberikan rekomendasi saat ini.';
     } on GenerativeAIException catch (e) {
+       print('!!! ERROR PADA getBookRecommendations: $e !!!');
       // Periksa apakah pesan error mengandung kode '429'
       if (e.message.contains('429')) {
         throw RateLimitException('Batas penggunaan AI harian telah tercapai.');
@@ -44,6 +45,7 @@ class AIService {
       final response = await model.generateContent(content);
       return response.text ?? 'Maaf, saya tidak bisa menjawab pertanyaan itu saat ini.';
     } on GenerativeAIException catch (e) {
+       print('!!! ERROR PADA getInteractiveAnswer: $e !!!');
       if (e.message.contains('429')) {
         throw RateLimitException('Batas penggunaan AI harian telah tercapai.');
       }
@@ -63,6 +65,7 @@ class AIService {
       final response = await model.generateContent(content);
       return response.text ?? '[]';
     } on GenerativeAIException catch (e) {
+       print('!!! ERROR PADA generateBookQuiz: $e !!!');
       if (e.message.contains('429')) {
         throw RateLimitException('Batas penggunaan AI harian telah tercapai.');
       }

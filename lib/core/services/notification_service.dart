@@ -17,15 +17,20 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 class NotificationService {
-  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initializationSettings = InitializationSettings(android: androidSettings);
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
+    const initializationSettings = InitializationSettings(
+      android: androidSettings,
+    );
     await _notifications.initialize(
       initializationSettings,
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
-       onDidReceiveNotificationResponse: (NotificationResponse response) {
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Cek 'payload' untuk menentukan aksi
         if (response.payload == 'open_bookshelf') {
           // Gunakan GlobalKey untuk navigasi
@@ -52,44 +57,121 @@ class NotificationService {
         await Permission.scheduleExactAlarm.isGranted;
   }
 
-  Future<void> scheduleDailyReminder() async {
-    // Pastikan semua izin sudah diberikan sebelum menjadwalkan
-    final bool permissionsGranted = await requestAllPermissions();
-    if (!permissionsGranted) return; // Hentikan jika izin ditolak
+  Future<bool> scheduleDailyReminder() async {
+    try {
+      // Cek dan minta izin notifikasi
+      final bool permissionsGranted = await requestAllPermissions();
+      if (!permissionsGranted) {
+        print('❌ Izin notifikasi ditolak, tidak bisa menjadwalkan pengingat');
+        return false;
+      }
 
-    final prefs = await SharedPreferences.getInstance();
-    final hour = prefs.getInt('reminderHour') ?? 20;
-    final minute = prefs.getInt('reminderMinute') ?? 0;
-    final scheduledDate = _nextInstanceOfTime(hour, minute);
+      // Ambil waktu dari preferences
+      final prefs = await SharedPreferences.getInstance();
+      final hour = prefs.getInt('reminderHour') ?? 20;
+      final minute = prefs.getInt('reminderMinute') ?? 0;
 
-    await _notifications.zonedSchedule(
-      0, // ID unik untuk notifikasi ini
-      'Waktunya Membaca! 🔥', // Judul Notifikasi
-      'Jangan biarkan apimu padam. Yuk, baca beberapa halaman hari ini.', // Isi Notifikasi
-      scheduledDate,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_reading_reminder_channel', // ID Channel
-          'Pengingat Membaca', // Nama Channel
-          channelDescription: 'Mengingatkan untuk membaca setiap hari.', // Deskripsi Channel
-          importance: Importance.max,
-          priority: Priority.high,
-          color: Color(0xFF6D4C41),
-          playSound: true,
-          // icon: 'reading',
-          // icon: 'stack_of_books',
-        ),
+      final scheduledDate = _nextInstanceOfTime(hour, minute);
+
+      // Batalkan notifikasi yang sudah ada terlebih dahulu
+      await _cancelExistingReminder();
+
+      // Jadwalkan notifikasi harian
+      await _notifications.zonedSchedule(
+        0, // ID unik
+        _getMotivationalTitle(), // Judul yang memotivasi
+        _getPersonalizedMessage(), // Pesan yang personal
+        scheduledDate,
+        _getEnhancedNotificationDetails(), // Detail notifikasi yang lebih baik
+        payload: 'open_bookshelf',
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+
+      print('✅ Pengingat harian berhasil dijadwalkan pukul $hour:$minute');
+
+      return true;
+    } catch (e) {
+      print('❌ Gagal menjadwalkan pengingat harian: $e');
+      return false;
+    }
+  }
+
+  Future<void> _cancelExistingReminder() async {
+    try {
+      await _notifications.cancel(0);
+      print('✅ Notifikasi lama dibatalkan');
+    } catch (e) {
+      print('⚠️ Gagal membatalkan notifikasi lama: $e');
+    }
+  }
+
+  NotificationDetails _getEnhancedNotificationDetails() {
+    return const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'daily_reading_reminder_channel',
+        '🔥 Pengingat Membaca Harian',
+        channelDescription:
+            'Mengingatkan Anda untuk membaca setiap hari dan menjaga streak membaca',
+        importance: Importance.max,
+        priority: Priority.high,
+        color: Color(0xFF6D4C41),
+        playSound: true,
+        enableVibration: true,
+        autoCancel: true,
       ),
-      payload: 'open_bookshelf',
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
     );
+  }
+
+  String _getMotivationalTitle() {
+    final now = DateTime.now();
+    final hour = now.hour;
+
+    if (hour < 12) {
+      return '🌅 Selamat Pagi, Waktunya Membaca!';
+    } else if (hour < 15) {
+      return '☀️ Selamat Siang, Isi Harimu dengan Buku!';
+    } else if (hour < 18) {
+      return '🌇 Selamat Sore, Saatnya Relaksasi dengan Buku';
+    } else {
+      return '🌙 Selamat Malam, Jaga Apimu Tetap Menyala!';
+    }
+  }
+
+  String _getPersonalizedMessage() {
+    final messages = [
+      'Jangan biarkan streak-mu padam! Baca 10 menit saja hari ini. 🔥',
+      'Buku-bukumu menunggumu! Yuk, lanjutkan perjalanan membacamu. 📚',
+      'Membaca hari ini = Streak yang lebih kuat besok! Terus semangat! 💪',
+      'Api membacamu butuh bahan bakar! Baca beberapa halaman yuk. ✨',
+      'Progress kecil hari ini = Pencapaian besar besok! Tetap konsisten! 🚀',
+      'Waktu terbaik untuk membaca adalah sekarang. Jaga momentummu! ⚡',
+      'Setiap halaman yang dibaca membawamu lebih dekat ke goals-mu! 🌟',
+      'Jangan lewatkan hari ini! Baca buku favoritmu dan jaga streak. 📖',
+      'Konsisten adalah kunci! Luangkan waktu sebentar untuk membaca. 🗝️',
+      'Membaca adalah investasi untuk dirimu sendiri. Yuk, mulai sekarang! 💎',
+      'Satu bab lagi sebelum tidur? Kamu pasti bisa! 🚀'
+      'Dunia di dalam bukumu merindukanmu. Ayo kembali berpetualang. 🗺️'
+      'Investasi 15 menit untuk membaca hari ini akan sangat berarti. ✨'
+      'Jangan putus rantai kebiasaan baikmu. Api streak menunggumu! 🔥'
+      'Lelah? Membaca bisa jadi cara terbaik untuk bersantai sejenak. ☕',
+      'Lihat kalender di statistikmu, jangan biarkan ada hari yang kosong! 🗓️'
+    ];
+
+    final randomIndex = DateTime.now().day % messages.length;
+    return messages[randomIndex];
   }
 
   tz.TZDateTime _nextInstanceOfTime(int hour, int minute) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }

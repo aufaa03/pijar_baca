@@ -187,49 +187,59 @@ class StatsScreen extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 16),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10, // Reduced from 12
-          childAspectRatio: 1.4, // Increased from 1.3 untuk lebih tinggi
-          children: [
-            _buildStatCard(
-              context,
-              title: 'Buku Selesai',
-              value: totalBooksValue.value ?? 0,
-              subtitle: 'Tahun ini',
-              icon: Icons.library_books_rounded,
-              iconColor: Theme.of(context).colorScheme.primary,
-              isLoading: totalBooksValue.isLoading,
-              progress: (totalBooksValue.value ?? 0) / (targetValue),
-            ),
-            _buildStatCard(
-              context,
-              title: 'Hari Membaca',
-              value: readingDaysCountValue.value ?? 0,
-              subtitle: 'Total',
-              icon: Icons.calendar_today_rounded,
-              iconColor: Colors.green.shade600,
-              isLoading: readingDaysCountValue.isLoading,
-            ),
-            _buildStatCard(
-              context,
-              title: 'Rata-rata',
-              value: averageBooksValue.value?.round() ?? 0,
-              subtitle: 'Buku/bulan',
-              icon: Icons.trending_up_rounded,
-              iconColor: Colors.orange.shade600,
-              isLoading: averageBooksValue.isLoading,
-            ),
-            _buildProgressCard(
-              context,
-              current: totalBooksValue.value ?? 0,
-              target: targetValue,
-              isLoading: totalBooksValue.isLoading,
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Responsive grid berdasarkan screen width
+            final crossAxisCount = constraints.maxWidth > 400 ? 2 : 2;
+            final childAspectRatio = constraints.maxWidth > 400 ? 1.3 : 1.1;
+
+            return GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: childAspectRatio,
+              children: [
+                _buildStatCard(
+                  context,
+                  title: 'Buku Selesai',
+                  value: totalBooksValue.value ?? 0,
+                  subtitle: 'Tahun ini',
+                  icon: Icons.library_books_rounded,
+                  iconColor: Theme.of(context).colorScheme.primary,
+                  isLoading: totalBooksValue.isLoading,
+                  progress:
+                      (totalBooksValue.value ?? 0) /
+                      (targetValue > 0 ? targetValue : 1),
+                ),
+                _buildStatCard(
+                  context,
+                  title: 'Hari Membaca',
+                  value: readingDaysCountValue.value ?? 0,
+                  subtitle: 'Total',
+                  icon: Icons.calendar_today_rounded,
+                  iconColor: Colors.green.shade600,
+                  isLoading: readingDaysCountValue.isLoading,
+                ),
+                _buildStatCard(
+                  context,
+                  title: 'Rata-rata',
+                  value: averageBooksValue.value?.round() ?? 0,
+                  subtitle: 'Buku/bulan',
+                  icon: Icons.trending_up_rounded,
+                  iconColor: Colors.orange.shade600,
+                  isLoading: averageBooksValue.isLoading,
+                ),
+                _buildProgressCard(
+                  context,
+                  current: totalBooksValue.value ?? 0,
+                  target: targetValue,
+                  isLoading: totalBooksValue.isLoading,
+                ),
+              ],
+            );
+          },
         ),
       ],
     );
@@ -246,6 +256,9 @@ class StatsScreen extends ConsumerWidget {
     double progress = 0.0,
   }) {
     return Container(
+      constraints: const BoxConstraints(
+        minHeight: 110, // TAMBAHKAN CONSTRAINTS
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -258,7 +271,7 @@ class StatsScreen extends ConsumerWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12), // Reduced from 16
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,27 +280,27 @@ class StatsScreen extends ConsumerWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(5), // Reduced from 6
+                  padding: const EdgeInsets.all(4), // DIKURANGI
                   decoration: BoxDecoration(
                     color: iconColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6), // DIKURANGI
                   ),
                   child: Icon(
                     icon,
-                    size: 16,
+                    size: 14, // DIKURANGI
                     color: iconColor,
-                  ), // Reduced from 18
+                  ),
                 ),
                 const Spacer(),
                 if (isLoading)
                   const SizedBox(
-                    width: 12, // Reduced from 14
-                    height: 12, // Reduced from 14
-                    child: CircularProgressIndicator(strokeWidth: 1.5),
+                    width: 10, // DIKURANGI
+                    height: 10,
+                    child: CircularProgressIndicator(strokeWidth: 1.2),
                   ),
               ],
             ),
-            const SizedBox(height: 8), // Reduced from 10
+            const SizedBox(height: 6), // DIKURANGI
             TweenAnimationBuilder<int>(
               tween: IntTween(begin: 0, end: value),
               duration: const Duration(milliseconds: 1000),
@@ -297,28 +310,28 @@ class StatsScreen extends ConsumerWidget {
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: Theme.of(context).colorScheme.onSurface,
-                    fontSize: 18, // Reduced from 20
+                    fontSize: 16, // DIKURANGI
                   ),
                 );
               },
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 1), // DIKURANGI
             Text(
               title,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                 fontWeight: FontWeight.w500,
-                fontSize: 11, // Reduced from 12
+                fontSize: 10, // DIKURANGI
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 1),
+            const SizedBox(height: 0), // DIHAPUS ATAU DIKURANGI
             Text(
               subtitle,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                fontSize: 9, // Reduced from 10
+                fontSize: 8, // DIKURANGI
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -326,15 +339,15 @@ class StatsScreen extends ConsumerWidget {
             if (progress > 0 && title == 'Buku Selesai')
               Column(
                 children: [
-                  const SizedBox(height: 6), // Reduced from 8
+                  const SizedBox(height: 4), // DIKURANGI
                   LinearProgressIndicator(
                     value: progress > 1 ? 1.0 : progress,
                     backgroundColor: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.1),
                     color: iconColor,
-                    borderRadius: BorderRadius.circular(4),
-                    minHeight: 3, // Reduced from 4
+                    borderRadius: BorderRadius.circular(2), // DIKURANGI
+                    minHeight: 2, // DIKURANGI
                   ),
                 ],
               ),
@@ -354,6 +367,7 @@ class StatsScreen extends ConsumerWidget {
     final percentage = (progress * 100).round();
 
     return Container(
+      constraints: const BoxConstraints(minHeight: 110),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
@@ -366,49 +380,42 @@ class StatsScreen extends ConsumerWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12), // Reduced from 16
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(5), // Reduced from 6
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: Colors.purple.shade600.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: Icon(
                     Icons.flag_rounded,
-                    size: 16,
+                    size: 14,
                     color: Colors.purple.shade600,
-                  ), // Reduced from 18
+                  ),
                 ),
                 const Spacer(),
                 if (isLoading)
                   const SizedBox(
-                    width: 12, // Reduced from 14
-                    height: 12, // Reduced from 14
+                    width: 12,
+                    height: 12,
                     child: CircularProgressIndicator(strokeWidth: 1.5),
                   ),
               ],
             ),
-            const SizedBox(height: 8), // Reduced from 10
-            TweenAnimationBuilder<int>(
-              tween: IntTween(begin: 0, end: percentage),
-              duration: const Duration(milliseconds: 1000),
-              builder: (context, animatedValue, child) {
-                return Text(
-                  '$animatedValue%',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: _getProgressColor(context, progress),
-                    fontSize: 18, // Reduced from 20
-                  ),
-                );
-              },
+            const SizedBox(height: 8),
+            Text(
+              '$percentage%',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: _getProgressColor(context, progress),
+                fontSize: 18,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
@@ -416,7 +423,6 @@ class StatsScreen extends ConsumerWidget {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                 fontWeight: FontWeight.w500,
-                fontSize: 11, // Reduced from 12
               ),
             ),
             const SizedBox(height: 1),
@@ -424,10 +430,9 @@ class StatsScreen extends ConsumerWidget {
               '$current/$target buku',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                fontSize: 9, // Reduced from 10
               ),
             ),
-            const SizedBox(height: 6), // Reduced from 8
+            const SizedBox(height: 6),
             LinearProgressIndicator(
               value: progress > 1 ? 1.0 : progress,
               backgroundColor: Theme.of(
@@ -435,7 +440,7 @@ class StatsScreen extends ConsumerWidget {
               ).colorScheme.onSurface.withOpacity(0.1),
               color: _getProgressColor(context, progress),
               borderRadius: BorderRadius.circular(4),
-              minHeight: 4, // Reduced from 6
+              minHeight: 4,
             ),
           ],
         ),

@@ -208,74 +208,84 @@ class DetailStreakScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatCard(
-    BuildContext context, {
-    required String title,
-    required int value,
-    required String subtitle,
-    required IconData icon,
-    required Color iconColor,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+ Widget _buildStatCard(
+  BuildContext context, {
+  required String title,
+  required int value,
+  required String subtitle,
+  required IconData icon,
+  required Color iconColor,
+}) {
+  return Container(
+    constraints: const BoxConstraints(
+      minHeight: 120, // TAMBAHKAN CONSTRAINTS
+    ),
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.surface,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(8), // DIKURANGI
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6), // DIKURANGI
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 26, color: iconColor), // DIKURANGI
+          ),
+          const SizedBox(height: 8), // DIKURANGI
+          TweenAnimationBuilder<int>(
+            tween: IntTween(begin: 0, end: value),
+            duration: const Duration(milliseconds: 800),
+            builder: (context, val, child) {
+              return Text(
+                "$val",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 16, // DIKURANGI
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 2), // DIKURANGI
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              fontWeight: FontWeight.w500,
+              fontSize: 10, // DIKURANGI
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 0), // DIHAPUS
+          Text(
+            subtitle,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              fontSize: 8, // DIKURANGI
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 20, color: iconColor),
-            ),
-            const SizedBox(height: 12),
-            TweenAnimationBuilder<int>(
-              tween: IntTween(begin: 0, end: value),
-              duration: const Duration(milliseconds: 800),
-              builder: (context, val, child) {
-                return Text(
-                  "$val",
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildInfoSection(BuildContext context) {
     return Container(

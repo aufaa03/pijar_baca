@@ -1,10 +1,8 @@
-// GANTI FULL CODE bookshelf_screen.dart dengan ini:
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pijar_baca/features/book/data/book_model.dart';
 import 'package:pijar_baca/features/book/presentation/add_book_screen.dart';
-import 'package:pijar_baca/features/home/presentation/book_list_view.dart';
+import 'package:pijar_baca/features/book/presentation/book_detail_screen.dart';
 import 'package:pijar_baca/features/stats/presentation/stats_screen.dart';
 import 'package:pijar_baca/features/book/presentation/scan_isbn_screen.dart';
 import 'package:pijar_baca/features/book/presentation/book_provider.dart';
@@ -66,8 +64,8 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
                       Text(
                         'Tambah Buku Baru',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       IconButton(
                         onPressed: () => Navigator.pop(context),
@@ -81,8 +79,10 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
                   Text(
                     'Pilih cara menambahkan buku ke koleksimu',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
+                    ),
                   ),
                 ],
               ),
@@ -176,15 +176,15 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
       ),
       title: Text(
         title,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
       ),
       subtitle: Text(
         subtitle,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            ),
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        ),
       ),
       trailing: Icon(
         Icons.arrow_forward_ios_rounded,
@@ -208,101 +208,107 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
   }
 
   Widget _buildBottomNavItem({
-  required IconData icon,
-  required String label,
-  required int index,
-  required int itemCount,
-  required bool isActive,
-}) {
-  return Expanded(
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6), // Reduced from 8
-          decoration: BoxDecoration(
-            border: isActive
-                ? Border(
-                    top: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 2,
+    required IconData icon,
+    required String label,
+    required int index,
+    required int itemCount,
+    required bool isActive,
+  }) {
+    return Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+              border: isActive
+                  ? Border(
+                      top: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 2,
+                      ),
+                    )
+                  : null,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Icon(
+                      icon,
+                      size: 20,
+                      color: isActive
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.4),
                     ),
-                  )
-                : null,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(
-                    icon,
-                    size: 20, // Reduced from 22
-                    color: isActive
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                  ),
-                  if (itemCount > 0)
-                    Positioned(
-                      top: -3, // Adjusted from -4
-                      right: -3, // Adjusted from -4
-                      child: Container(
-                        padding: const EdgeInsets.all(3), // Reduced from 4
-                        decoration: BoxDecoration(
-                          color: isActive
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.grey.shade500,
-                          shape: BoxShape.circle,
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 14, // Reduced from 16
-                          minHeight: 14, // Reduced from 16
-                        ),
-                        child: Text(
-                          itemCount > 9 ? '9+' : itemCount.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 7, // Reduced from 8
-                            fontWeight: FontWeight.bold,
-                            height: 1,
+                    if (itemCount > 0)
+                      Positioned(
+                        top: -4,
+                        right: -4,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.grey.shade500,
+                            shape: BoxShape.circle,
                           ),
-                          textAlign: TextAlign.center,
+                          constraints: const BoxConstraints(
+                            minWidth: 14,
+                            minHeight: 14,
+                          ),
+                          child: Text(
+                            itemCount > 9 ? '9+' : itemCount.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 7,
+                              fontWeight: FontWeight.bold,
+                              height: 1,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 2), // Reduced from 4
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 10, // Reduced from 11
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                  color: isActive
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  ],
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+                const SizedBox(height: 3),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                    color: isActive
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildHeaderSection(BuildContext context) {
-    final currentBooks = ref.watch(booksByStatusProvider(_tabStatus[_currentIndex]));
+    final currentBooks = ref.watch(
+      booksByStatusProvider(_tabStatus[_currentIndex]),
+    );
     final totalBooks = currentBooks.maybeWhen(
       data: (books) => books.length,
       orElse: () => 0,
@@ -310,7 +316,7 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(
@@ -326,14 +332,22 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                _getHeaderTitle(_currentIndex),
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+              Expanded(
+                child: Text(
+                  _getHeaderTitle(_currentIndex),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+              const SizedBox(width: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -341,23 +355,307 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
                 child: Text(
                   '$totalBooks Buku',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             _getHeaderSubtitle(_currentIndex),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                ),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              fontSize: 13,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildBookCard(BuildContext context, Book book) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Material(
+      color: isDarkMode
+          ? colorScheme.surface
+          : Colors.white, // PAKAI WHITE BERSIH DI LIGHT MODE
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookDetailScreen(book: book),
+            ),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: isDarkMode
+                ? colorScheme.surface
+                : Colors.white, // BACKGROUND PUTIH BERSIH
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(
+                  isDarkMode ? 0.1 : 0.08,
+                ), // SHADOW LEBIH SOFT DI LIGHT MODE
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+            border: isDarkMode
+                ? null
+                : Border.all(
+                    color: Colors
+                        .grey
+                        .shade100, // BORDER SANGAT HALUS DI LIGHT MODE
+                    width: 1,
+                  ),
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Book Cover
+                  Container(
+                    height: constraints.maxHeight * 0.7,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ),
+                      color: isDarkMode
+                          ? colorScheme.surfaceVariant
+                          : Colors
+                                .grey
+                                .shade50, // BACKGROUND COVER LEBIH TERANG DI LIGHT MODE
+                    ),
+                    child: book.coverUrl != null && book.coverUrl!.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16),
+                            ),
+                            child: Image.network(
+                              book.coverUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return _buildPlaceholderCover(
+                                  colorScheme,
+                                  isDarkMode,
+                                );
+                              },
+                            ),
+                          )
+                        : _buildPlaceholderCover(colorScheme, isDarkMode),
+                  ),
+
+                  // Book Info
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Title Section
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Judul
+                              Text(
+                                book.title ?? 'Tanpa Judul',
+                                style: textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.2,
+                                  color: isDarkMode
+                                      ? colorScheme.onSurface
+                                      : Colors
+                                            .grey
+                                            .shade800, // TEXT LEBIH GELAP DI LIGHT MODE
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              // Author
+                              Text(
+                                book.author ?? 'Tanpa Penulis',
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: isDarkMode
+                                      ? colorScheme.onSurface.withOpacity(0.7)
+                                      : Colors
+                                            .grey
+                                            .shade600, // AUTHOR LEBIH CONTRAST DI LIGHT MODE
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+
+                          // Status Section
+                          _buildBookStatus(
+                            book,
+                            colorScheme,
+                            textTheme,
+                            isDarkMode,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBookStatus(
+    Book book,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    bool isDarkMode,
+  ) {
+    if (book.status == BookStatus.reading) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          LinearProgressIndicator(
+            value: (book.currentPage ?? 0) / (book.totalPages ?? 1),
+            backgroundColor: isDarkMode
+                ? colorScheme.surfaceVariant
+                : Colors.grey.shade200,
+            color: colorScheme.primary,
+            borderRadius: BorderRadius.circular(2),
+            minHeight: 3,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            '${book.currentPage ?? 0}/${book.totalPages ?? 0}',
+            style: textTheme.labelSmall?.copyWith(
+              color: isDarkMode
+                  ? colorScheme.onSurface.withOpacity(0.6)
+                  : Colors.grey.shade600,
+              fontSize: 9,
+            ),
+          ),
+        ],
+      );
+    } else if (book.status == BookStatus.finished) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(
+            isDarkMode ? 0.1 : 0.15,
+          ), // LEBIH TERANG DI LIGHT MODE
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.check_circle, size: 10, color: Colors.green),
+            const SizedBox(width: 2),
+            Text(
+              'Selesai',
+              style: textTheme.labelSmall?.copyWith(
+                color: Colors.green,
+                fontWeight: FontWeight.w600,
+                fontSize: 9,
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Text(
+        '${book.totalPages ?? 0} hlm',
+        style: textTheme.labelSmall?.copyWith(
+          color: isDarkMode
+              ? colorScheme.onSurface.withOpacity(0.5)
+              : Colors.grey.shade500,
+          fontSize: 9,
+        ),
+      );
+    }
+  }
+
+  Widget _buildPlaceholderCover(ColorScheme colorScheme, bool isDarkMode) {
+    return Container(
+      color: isDarkMode
+          ? colorScheme.surfaceVariant
+          : Colors.grey.shade100, // BACKGROUND LEBIH TERANG DI LIGHT MODE
+      child: Center(
+        child: Icon(
+          Icons.book_rounded,
+          color: isDarkMode
+              ? colorScheme.onSurfaceVariant
+              : Colors.grey.shade400, // ICON LEBIH SOFT DI LIGHT MODE
+          size: 36,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.auto_stories_rounded,
+              size: 64,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Belum ada buku',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _getEmptyStateMessage(_currentIndex),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getEmptyStateMessage(int index) {
+    switch (index) {
+      case 0:
+        return 'Mulai baca buku pertama Anda\natau tambah dari wishlist';
+      case 1:
+        return 'Belum ada buku yang selesai dibaca';
+      case 2:
+        return 'Tambahkan buku yang ingin\nAnda baca nanti';
+      default:
+        return 'Belum ada buku dalam koleksi';
+    }
   }
 
   String _getHeaderTitle(int index) {
@@ -397,9 +695,9 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
       appBar: AppBar(
         title: Text(
           'Pijar Baca',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
         ),
         centerTitle: false,
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -410,7 +708,7 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
           Consumer(
             builder: (context, ref, child) {
               final detailsAsync = ref.watch(streakDetailsProvider);
-              
+
               return detailsAsync.when(
                 data: (data) {
                   final current = data['current'] ?? 0;
@@ -435,7 +733,10 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
                       );
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       margin: const EdgeInsets.only(right: 8),
                       decoration: BoxDecoration(
                         color: Colors.grey.withOpacity(0.1),
@@ -448,9 +749,8 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
                           const SizedBox(width: 6),
                           Text(
                             current.toString(),
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
@@ -458,7 +758,10 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
                   );
                 },
                 loading: () => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   margin: const EdgeInsets.only(right: 8),
                   child: const SizedBox(
                     width: 16,
@@ -485,15 +788,13 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
             ),
             tooltip: 'Statistik',
           ),
-          
+
           // Settings Button
           IconButton(
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
             },
             icon: Icon(
@@ -508,10 +809,43 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
         children: [
           // Header Section
           _buildHeaderSection(context),
-          
-          // Book List
+
+          // Book List - SESUAIKAN ASPECT RATIO
           Expanded(
-            child: BookListView(status: _tabStatus[_currentIndex]),
+            child: Consumer(
+              builder: (context, ref, child) {
+                final booksAsync = ref.watch(
+                  booksByStatusProvider(_tabStatus[_currentIndex]),
+                );
+
+                return booksAsync.when(
+                  data: (books) {
+                    if (books.isEmpty) {
+                      return _buildEmptyState(context);
+                    }
+
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(16),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 0.65,
+                          ),
+                      itemCount: books.length,
+                      itemBuilder: (context, index) {
+                        final book = books[index];
+                        return _buildBookCard(context, book);
+                      },
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (error, stack) => Center(child: Text('Error: $error')),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -528,8 +862,8 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
         ),
         child: SafeArea(
           child: Container(
-            height: 70,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            height: 65,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Row(
               children: [
                 _buildBottomNavItem(
@@ -583,11 +917,7 @@ class _BookshelfScreenState extends ConsumerState<BookshelfScreen> {
               end: Alignment.bottomRight,
             ),
           ),
-          child: const Icon(
-            Icons.add_rounded,
-            color: Colors.white,
-            size: 24,
-          ),
+          child: const Icon(Icons.add_rounded, color: Colors.white, size: 24),
         ),
       ),
     );

@@ -6,11 +6,11 @@ part of 'initialization_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appInitializationHash() => r'2ab3ae946c1d3a08c162b7775207202d86c39a51';
+String _$appInitializationHash() => r'ac897cbe6df48fb7c620f39d6aeeff29f06d6dcb';
 
 /// See also [appInitialization].
 @ProviderFor(appInitialization)
-final appInitializationProvider = AutoDisposeFutureProvider<void>.internal(
+final appInitializationProvider = AutoDisposeFutureProvider<bool>.internal(
   appInitialization,
   name: r'appInitializationProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -20,6 +20,6 @@ final appInitializationProvider = AutoDisposeFutureProvider<void>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef AppInitializationRef = AutoDisposeFutureProviderRef<void>;
+typedef AppInitializationRef = AutoDisposeFutureProviderRef<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
