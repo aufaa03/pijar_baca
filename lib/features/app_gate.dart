@@ -1,5 +1,5 @@
 // Versi dengan animasi lebih smooth
-// import 'package:flutter/foundation.dart';  untuk debug mode
+// import 'package:flutter/foundation.dart';  //untuk debug mode
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pijar_baca/core/providers/initialization_provider.dart';
