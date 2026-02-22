@@ -63,7 +63,7 @@ Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah ber
 
 2.  **Clone Repositori**:
     ```bash
-    git clone [https://github.com/NAMA_GITHUB_ANDA/pijar_baca.git](https://github.com/aufaa03/pijar_baca.git)
+    git clone [https://github.com/aufaa03/pijar_baca.git](https://github.com/aufaa03/pijar_baca.git)
     cd pijar_baca
     ```
 3.  **Siapkan API Keys (Penting!)**:
