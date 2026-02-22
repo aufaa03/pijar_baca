@@ -34,11 +34,11 @@ Didukung oleh Google Gemini, Pijar Baca menjadi partner membaca Anda:
 
 ## 🖼️ Galeri Aplikasi
 
-| Rak Buku (Galeri) | Halaman Detail | Statistik & Kalender |
+| Rak Buku (Galeri) | Halaman Tambah Buku | Statistik & Kalender |
 | :---: |:---:|:---:|
-| <img src="" width="250"> | <img src="" width="250"> | <img src="" width="250"> |
-| **Kuis Interaktif** | **Pengaturan** | **Onboarding** |
-| <img src="" width="250"> | <img src="" width="250"> | <img src="" width="250"> |
+| <img src="https://github.com/user-attachments/assets/faef713d-b9ae-451a-b8e4-3cec4aa39c22" width="250"> | <img src="https://github.com/user-attachments/assets/135afca6-2657-456f-91c8-89df60b282e9" width="250"> | <img src="https://github.com/user-attachments/assets/a8f42692-07f2-48a8-be2b-ba5f4d2df969" width="250"> |
+| **Detail Buku** | **Streak** | **Onboarding** |
+| <img src="https://github.com/user-attachments/assets/73d38252-a4e7-4824-99e8-b3351050d5ed" width="250"> | <img src="https://github.com/user-attachments/assets/338b1cd4-56cd-49c8-a8e8-d4aeda7d9ba7" width="250"> | <img src="https://github.com/user-attachments/assets/dd1665f9-34ff-43ac-afe7-a471b8525b2f" width="250"> |
 
 ---
 
